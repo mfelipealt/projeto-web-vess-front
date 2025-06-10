@@ -1,3 +1,5 @@
+import { Button } from "@chakra-ui/react";
+import { CardMenu } from "../../components/CardMenu";
 
 export function HomePage() {
 
@@ -6,25 +8,25 @@ export function HomePage() {
             <div className="container">
                 <h1 className="text-center">VESS</h1>
                 <div className="col-12 mb-3">
-                    <button>Avaliar</button>
+                <CardMenu></CardMenu>
                 </div>
                 <div className="col-12 mb-3">
                     <h3 className="text-center">Processo de avaliação</h3>
-                    <button>Equipamentos</button>
-                    <button>Onde Amostrar</button>
-                    <button>Quando Amostrar</button>
-                    <button>Extração da Amostra</button>
-                    <button>Fragmentação da Amostra</button>
-                    <button>Escores VESS</button>
+                    <Button>Equipamentos</Button>
+                    <Button>Onde Amostrar</Button>
+                    <Button>Quando Amostrar</Button>
+                    <Button>Extração da Amostra</Button>
+                    <Button>Fragmentação da Amostra</Button>
+                    <Button>Escores VESS</Button>
                 </div>
                 <div className="col-12 mb-3">
                     <h3 className="text-center">Extras</h3>
-                    <button>Decisão de Manejo</button>
-                    <button>Informações Complementares</button>
-                    <button>Oque é o VESS</button>
-                    <button>Minhas Avaliações</button>
-                    <button>Sobre o App</button>
-                    <button>Configurações</button>
+                    <Button>Decisão de Manejo</Button>
+                    <Button>Informações Complementares</Button>
+                    <Button>Oque é o VESS</Button>
+                    <Button>Minhas Avaliações</Button>
+                    <Button>Sobre o App</Button>
+                    <Button>Configurações</Button>
                 </div>
             </div>
         </>

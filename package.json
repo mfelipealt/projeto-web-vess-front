@@ -10,13 +10,22 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@chakra-ui/react": "^3.20.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@popperjs/core": "^2.11.8",
-    "@types/node": "^20.12.11",
-    "axios": "^1.6.8",
-    "bootstrap": "^5.3.3",
+    "@types/node": "^20.19.0",
+    "axios": "^1.9.0",
+    "bootstrap": "^5.3.6",
+    "framer-motion": "^12.16.0",
+    "localforage": "^1.10.0",
+    "match-sorter": "^8.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "sass": "^1.77.1"
+    "react-hook-form": "^7.57.0",
+    "react-icons": "^5.5.0",
+    "react-router-dom": "^7.6.2",
+    "sort-by": "^1.2.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
@@ -27,6 +36,8 @@
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
+    "sass": "^1.89.2",
+    "sass-loader": "^16.0.5",
     "typescript": "^5.2.2",
     "vite": "^5.2.0"
   }
