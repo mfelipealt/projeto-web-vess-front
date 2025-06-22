@@ -13,8 +13,16 @@ import {
   FaMap,
   FaShare
 } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 export function HomePage() {
+
+  const navigate = useNavigate()
+
+  const handleClick = () => {
+    navigate("/avaliacoes");
+  };
+
   const evaluationProcessCards = [
     { icon: <FaTools size="1.5em" />, title: "Equipamentos", path: "/decisao" },
     { icon: <FaMap size="1.5em" />, title: "Onde\nAmostrar", path: "/decisao" },
@@ -41,7 +49,7 @@ export function HomePage() {
         </Heading>
 
         <Center>
-          <Button colorScheme="teal" size="lg" w={{ base: "100%", md: "auto" }}>
+          <Button colorScheme="teal" size="lg" w={{ base: "100%", md: "auto" }} onClick={handleClick}>
             Avaliar
           </Button>
         </Center>
