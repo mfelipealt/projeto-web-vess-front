@@ -2,14 +2,28 @@
 import { Button, ButtonGroup, FileUpload, Flex, Heading, IconButton, Stack, Text } from "@chakra-ui/react";
 import { InputComponent } from "../../components/InputComponent";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { useUserConfig } from "../../contexts/UserConfigContext";
+import { useState } from "react";
 import { TextAreaComponent } from "../../components/TextAreaComponent";
 import {
     FaCamera
 } from "react-icons/fa";
 
 export function EvaluationPage() {
+
+    const initialEvaluationData = {
+        "nmr-amostra": "",
+        "comprimento-camada-1": "",
+        "nota-camada-1": "",
+        "comprimento-camada-2": "",
+        "nota-camada-2": "",
+        "comprimento-camada-3": "",
+        "nota-camada-3": "",
+        "comprimento-camada-4": "",
+        "nota-camada-4": "",
+        "comprimento-camada-5": "",
+        "nota-camada-5": "",
+        "infos-importantes": "",
+    };
 
     const evaluationProcessInputs = [
         { name: "local-propriedade", label: "Local/propriedade (GPS)::", placeholder: "" },
@@ -28,7 +42,8 @@ export function EvaluationPage() {
         { name: "comprimento-camada-5", label: "Comprimento camada 5:", placeholder: "", layer: 5 },
         { name: "nota-camada-5", label: "Nota camada 5:", placeholder: "", layer: 5 },
     ];
-    const { formData, setFormData } = useUserConfig();
+    
+    const [formData, setFormData] = useState(initialEvaluationData);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -48,9 +63,42 @@ export function EvaluationPage() {
 
     const navigate = useNavigate();
 
-    const handleClick = () => {
+    const handleSaveAndEvaluate = () => {
+    try {
+      const existingEvaluationsRaw = localStorage.getItem('userEvaluations');
+      const existingEvaluations = existingEvaluationsRaw ? JSON.parse(existingEvaluationsRaw) : [];
 
-    };
+      const newEvaluation = {
+        id: Date.now(),
+        createdAt: new Date().toISOString(),
+        data: formData,
+      };
+
+      existingEvaluations.push(newEvaluation);
+      localStorage.setItem('userEvaluations', JSON.stringify(existingEvaluations));
+      
+    //   toast({
+    //     title: "Avaliação Salva!",
+    //     description: "Seus dados foram salvos localmente com sucesso.",
+    //     status: "success",
+    //     duration: 3000,
+    //     isClosable: true,
+    //   });
+
+      setFormData(initialEvaluationData); // Limpa o formulário local
+      navigate("/resumo-avaliacoes-amostra"); // Navega para a próxima página
+
+    } catch (error) {
+      console.error("Erro ao salvar avaliação:", error);
+    //   toast({
+    //     title: "Erro ao salvar",
+    //     description: "Não foi possível salvar a avaliação no dispositivo.",
+    //     status: "error",
+    //     duration: 5000,
+    //     isClosable: true,
+    //   });
+    }
+  };
 
     const [visibleLayers, setVisibleLayers] = useState(1);
 
@@ -140,17 +188,17 @@ export function EvaluationPage() {
 
                 <TextAreaComponent
                     key={""}
-                    name={"infosImportantes" as keyof typeof formData}
+                    name={"infos-importantes" as keyof typeof formData}
                     label={"Outras informações importantes:"}
                     placeholder={""}
-                    value={formData["infosImportantes" as keyof typeof formData]}
+                    value={formData["infos-importantes" as keyof typeof formData]}
                     onChange={handleTextAreaChange}
                 />
                 <Flex py={6} px={3}>
                     <Button
                         size="lg"
                         w={{ base: "100%", md: "100%", lg: "100%" }}
-                        onClick={handleClick}
+                        onClick={handleSaveAndEvaluate}
                         transition="all 0.2s ease-in-out"
                     >
                         Avaliar
