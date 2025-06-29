@@ -2,7 +2,7 @@
 import { Button, ButtonGroup, FileUpload, Flex, Heading, IconButton, Stack, Text } from "@chakra-ui/react";
 import { InputComponent } from "../../components/InputComponent";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TextAreaComponent } from "../../components/TextAreaComponent";
 import {
     FaCamera
@@ -22,6 +22,7 @@ export function EvaluationPage() {
         "nota-camada-4": "",
         "comprimento-camada-5": "",
         "nota-camada-5": "",
+        "avaliador": "",
         "infos-importantes": "",
     };
 
@@ -42,7 +43,7 @@ export function EvaluationPage() {
         { name: "comprimento-camada-5", label: "Comprimento camada 5:", placeholder: "", layer: 5 },
         { name: "nota-camada-5", label: "Nota camada 5:", placeholder: "", layer: 5 },
     ];
-    
+
     const [formData, setFormData] = useState(initialEvaluationData);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,41 +65,62 @@ export function EvaluationPage() {
     const navigate = useNavigate();
 
     const handleSaveAndEvaluate = () => {
-    try {
-      const existingEvaluationsRaw = localStorage.getItem('userEvaluations');
-      const existingEvaluations = existingEvaluationsRaw ? JSON.parse(existingEvaluationsRaw) : [];
+        try {
+            const existingEvaluationsRaw = localStorage.getItem('userEvaluations');
+            const existingEvaluations = existingEvaluationsRaw ? JSON.parse(existingEvaluationsRaw) : [];
 
-      const newEvaluation = {
-        id: Date.now(),
-        createdAt: new Date().toISOString(),
-        data: formData,
-      };
+            const newEvaluation = {
+                id: Date.now(),
+                createdAt: new Date().toISOString(),
+                data: formData,
+            };
 
-      existingEvaluations.push(newEvaluation);
-      localStorage.setItem('userEvaluations', JSON.stringify(existingEvaluations));
-      
-    //   toast({
-    //     title: "Avaliação Salva!",
-    //     description: "Seus dados foram salvos localmente com sucesso.",
-    //     status: "success",
-    //     duration: 3000,
-    //     isClosable: true,
-    //   });
+            existingEvaluations.push(newEvaluation);
+            localStorage.setItem('userEvaluations', JSON.stringify(existingEvaluations));
 
-      setFormData(initialEvaluationData); // Limpa o formulário local
-      navigate("/resumo-avaliacoes-amostra"); // Navega para a próxima página
+            setFormData(initialEvaluationData); // Limpa o formulário local
+            navigate("/resumo-avaliacoes-amostra");
 
-    } catch (error) {
-      console.error("Erro ao salvar avaliação:", error);
-    //   toast({
-    //     title: "Erro ao salvar",
-    //     description: "Não foi possível salvar a avaliação no dispositivo.",
-    //     status: "error",
-    //     duration: 5000,
-    //     isClosable: true,
-    //   });
-    }
-  };
+        } catch (error) {
+            console.error("Erro ao salvar avaliação:", error);
+        }
+    };
+
+    useEffect(() => {
+        const userConfigRaw = localStorage.getItem("userConfig");
+        let nomeAvaliador = "";
+        if (userConfigRaw) {
+            try {
+                const userConfig = JSON.parse(userConfigRaw);
+                nomeAvaliador = userConfig.nome || "";
+            } catch {
+                nomeAvaliador = "";
+            }
+        }
+
+        const existingEvaluationsRaw = localStorage.getItem('userEvaluations');
+        if (existingEvaluationsRaw) {
+            try {
+                const existingEvaluations = JSON.parse(existingEvaluationsRaw);
+                const lastEvaluation = existingEvaluations[existingEvaluations.length - 1];
+
+                if (lastEvaluation && lastEvaluation.data) {
+                    setFormData(prev => ({
+                        ...prev,
+                        "avaliador": lastEvaluation.data["avaliador"] || nomeAvaliador || "",
+                        "local-propriedade": lastEvaluation.data["local-propriedade"] || "",
+                    }));
+                }
+            } catch (error) {
+                console.error("Erro ao carregar dados anteriores:", error);
+            }
+        } else {
+            setFormData(prev => ({
+                ...prev,
+                "avaliador": nomeAvaliador,
+            }));
+        }
+    }, []);
 
     const [visibleLayers, setVisibleLayers] = useState(1);
 
@@ -124,24 +146,20 @@ export function EvaluationPage() {
                     value={formData["nmr-amostra" as keyof typeof formData]}
                     onChange={handleInputChange}
                 />
-                <Stack textAlign={{base: "center", md: "center", lg: "left" }} pl={{base: 0, md: 0, lg: 4 }}>
+                <Stack textAlign={{ base: "center", md: "center", lg: "left" }} pl={{ base: 0, md: 0, lg: 4 }}>
                     <Text>Quantas camadas de solo deseja avaliar?</Text>
-                    <ButtonGroup variant="subtle" justifyContent={{base: "center", md: "center", lg: "left" }}>
-                    {[1, 2, 3, 4, 5].map((number) => (
-                        <Button
-                        key={number}
-                        // Atualiza o estado ao clicar
-                        onClick={() => setVisibleLayers(number)}
-                        // Destaca o botão ativo
-                        variant={visibleLayers === number ? 'solid' : 'outline'}
-      
-                        // Para um destaque ainda maior, você pode também mudar o esquema de cores
-                        colorScheme={visibleLayers === number ? 'teal' : 'gray'}
-                        rounded="full"
-                        >
-                        {number}
-                        </Button>
-                    ))}
+                    <ButtonGroup variant="subtle" justifyContent={{ base: "center", md: "center", lg: "left" }}>
+                        {[1, 2, 3, 4, 5].map((number) => (
+                            <Button
+                                key={number}
+                                onClick={() => setVisibleLayers(number)}
+                                variant={visibleLayers === number ? 'solid' : 'outline'}
+                                colorScheme={visibleLayers === number ? 'teal' : 'gray'}
+                                rounded="full"
+                            >
+                                {number}
+                            </Button>
+                        ))}
                     </ButtonGroup>
                 </Stack>
                 <Flex direction={"column"}>
@@ -162,14 +180,14 @@ export function EvaluationPage() {
                 {allLayerInputs
                     .filter(input => input.layer <= visibleLayers)
                     .map((input, index) => (
-                    <InputComponent
-                        key={index}
-                        name={input.name}
-                        label={input.label}
-                        placeholder={input.placeholder}
-                        value={formData[input.name as keyof typeof formData]}
-                        onChange={handleInputChange}
-                    />
+                        <InputComponent
+                            key={index}
+                            name={input.name}
+                            label={input.label}
+                            placeholder={input.placeholder}
+                            value={formData[input.name as keyof typeof formData]}
+                            onChange={handleInputChange}
+                        />
                     ))}
             </Flex>
 

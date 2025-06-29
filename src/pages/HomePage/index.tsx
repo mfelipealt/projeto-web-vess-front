@@ -20,6 +20,8 @@ export function HomePage() {
   const navigate = useNavigate()
 
   const handleClick = () => {
+    const startTime = new Date().toISOString();
+    localStorage.setItem("startTime", startTime);
     navigate("/avaliacoes");
   };
 

@@ -1,7 +1,7 @@
 
 import { Button, Card, Center, Heading, Text, VStack } from "@chakra-ui/react";
 import { TextAreaComponent } from "../../components/TextAreaComponent";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 
@@ -15,12 +15,72 @@ export function LocationEvaluationResumePage() {
 
     const navigate = useNavigate();
 
+    const [averageVessScore, setAverageVessScore] = useState<number | null>(null);
+
+    useEffect(() => {
+        const raw = localStorage.getItem("userEvaluations");
+        if (!raw) return;
+
+        const evaluations = JSON.parse(raw);
+        const qtdAmostras = evaluations.length;
+        const ultimaAvaliacao = evaluations[qtdAmostras - 1];
+
+        const avaliador = ultimaAvaliacao?.data?.avaliador || "-";
+
+        const startTime = localStorage.getItem("startTime");
+        let duration = "Duração desconhecida";
+
+        if (startTime) {
+            const start = new Date(startTime);
+            const end = new Date();
+            const diffMs = end.getTime() - start.getTime();
+
+            const diffSecsTotal = Math.floor(diffMs / 1000);
+            const diffHrs = Math.floor(diffSecsTotal / 3600);
+            const diffMins = Math.floor((diffSecsTotal % 3600) / 60);
+            const diffSecs = diffSecsTotal % 60;
+
+            duration = `${diffHrs} horas, ${diffMins} minutos e ${diffSecs} segundos`;
+        }
+
+        const resumo =
+            `${qtdAmostras} amostras\n` +
+            `Avaliador: ${avaliador}\n` +
+            `Data das avaliações: ${new Date().toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" })}\n` +
+            `Tempo total: ${duration}`;
+
+        setFormData(prev => ({
+            ...prev,
+            "resumo-avaliacao": resumo
+        }));
+    }, []);
+
+    useEffect(() => {
+        const rawData = localStorage.getItem("userEvaluations");
+        if (rawData) {
+            const evaluations = JSON.parse(rawData);
+            const scores = evaluations
+                .map((item: any) => parseFloat(item?.data?.["vess-score"]))
+                .filter((score: number) => !isNaN(score));
+
+            if (scores.length > 0) {
+                const avg = scores.reduce((acc: number, score: number) => acc + score, 0) / scores.length;
+                setAverageVessScore(+avg.toFixed(2));
+            }
+        }
+    }, []);
+
     const handleTextAreaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData(prevData => ({
             ...prevData,
             [name]: value,
         }));
+    };
+
+    const handleSave = () => {
+        localStorage.removeItem("userEvaluations");
+        navigate("/");
     };
 
     return (
@@ -31,18 +91,17 @@ export function LocationEvaluationResumePage() {
             </Heading>
 
             <Center flexDirection="column" textAlign="center"><Text>Escore Qe-VESS médio do local X:</Text> </Center>
-            
-            <Card.Root >
-                <Card.Body >
+
+            <Card.Root>
+                <Card.Body>
                     <Center flexDirection="column" textAlign="center">
                         <Heading
                             fontSize={{ base: "1rem", md: "1.3rem", lg: "1.5rem" }}
                             mt="3"
                             fontWeight="medium"
-                            style={{ whiteSpace: 'pre-line' }}
-                            
+                            style={{ whiteSpace: "pre-line" }}
                         >
-                            "3.1"
+                            {averageVessScore !== null ? averageVessScore : "N/A"}
                         </Heading>
                     </Center>
                 </Card.Body>
@@ -67,9 +126,9 @@ export function LocationEvaluationResumePage() {
             />
 
             <Button
-                 size="lg"
+                size="lg"
                 w={"100%"}
-                onClick={() => navigate("/")}
+                onClick={handleSave}
                 transition="all 0.2s ease-in-out"
                 ml={4}
             >

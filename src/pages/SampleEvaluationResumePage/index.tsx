@@ -1,9 +1,8 @@
 
 import { Button, Card, Center, Heading, Stack, Text, VStack } from "@chakra-ui/react";
 import { TextAreaComponent } from "../../components/TextAreaComponent";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 
 export function SampleEvaluationResumePage() {
 
@@ -14,6 +13,76 @@ export function SampleEvaluationResumePage() {
     });
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const raw = localStorage.getItem("userEvaluations");
+        if (!raw) return;
+
+        const evaluations = JSON.parse(raw);
+        const last = evaluations[evaluations.length - 1];
+        if (!last || !last.data) return;
+
+        const data = last.data;
+        let resumo = "";
+
+        for (let i = 1; i <= 5; i++) {
+            const comprimento = data[`comprimento-camada-${i}`];
+            const nota = data[`nota-camada-${i}`];
+
+            if (comprimento || nota) {
+                resumo += `Comprimento Camada ${i}: ${comprimento || "-"} cm; Nota ${i}: ${nota || "-"}\n`;
+            }
+        }
+
+        setFormData(prev => ({
+            ...prev,
+            "resumo-avaliacao": resumo.trim()
+        }));
+    }, []);
+
+    const [vessScore, setVessScore] = useState<number | null>(null);
+
+    useEffect(() => {
+        // Buscar a última avaliação salva
+        const evaluationsRaw = localStorage.getItem('userEvaluations');
+        if (evaluationsRaw) {
+            const evaluations = JSON.parse(evaluationsRaw);
+            const last = evaluations[evaluations.length - 1];
+            if (last && last.data) {
+                const layers = [1, 2, 3, 4, 5];
+                let totalDepth = 0;
+                let weightedSum = 0;
+
+                layers.forEach(layer => {
+                    const comprimento = parseFloat(last.data[`comprimento-camada-${layer}`]);
+                    const nota = parseFloat(last.data[`nota-camada-${layer}`]);
+
+                    if (!isNaN(comprimento) && !isNaN(nota)) {
+                        totalDepth += comprimento;
+                        weightedSum += comprimento * nota;
+                    }
+                });
+
+                if (totalDepth > 0) {
+                    const score = +(weightedSum / totalDepth).toFixed(2);
+                    setVessScore(score);
+
+                    // Salva o score no objeto de avaliação
+                    last.data["vess-score"] = score;
+                    evaluations[evaluations.length - 1] = last;
+                    localStorage.setItem("userEvaluations", JSON.stringify(evaluations));
+                }
+            }
+        }
+    }, []);
+
+    const handleSaveAndNext = () => {
+        navigate("/avaliacoes");
+    };
+
+    const handleFinalize = () => {
+        navigate("/resumo-avaliacoes-local");
+    };
 
     const handleTextAreaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -31,18 +100,12 @@ export function SampleEvaluationResumePage() {
             </Heading>
 
             <Center flexDirection="column" textAlign="center"><Text>Escore Qe-VESS da amostra X:</Text> </Center>
-            
-            <Card.Root >
-                <Card.Body >
+
+            <Card.Root>
+                <Card.Body>
                     <Center flexDirection="column" textAlign="center">
-                        <Heading
-                            fontSize={{ base: "1rem", md: "1.3rem", lg: "1.5rem" }}
-                            mt="3"
-                            fontWeight="medium"
-                            style={{ whiteSpace: 'pre-line' }}
-                            
-                        >
-                            "3.1"
+                        <Heading fontSize={{ base: "1rem", md: "1.3rem", lg: "1.5rem" }} mt="3" fontWeight="medium">
+                            {vessScore ?? "N/A"}
                         </Heading>
                     </Center>
                 </Card.Body>
@@ -84,7 +147,7 @@ export function SampleEvaluationResumePage() {
                 <Button
                     size="lg"
                     w={"100%"}
-                    onClick={() => navigate("/resumo-avaliacoes-local")}
+                    onClick={handleFinalize}
                     transition="all 0.2s ease-in-out"
                     ml={4}
                 >
@@ -94,7 +157,7 @@ export function SampleEvaluationResumePage() {
                 <Button
                     size="lg"
                     w={"100%"}
-                    onClick={() => navigate("/avaliacoes")}
+                    onClick={handleSaveAndNext}
                     transition="all 0.2s ease-in-out"
                 >
                     PRÓXIMA AMOSTRA
