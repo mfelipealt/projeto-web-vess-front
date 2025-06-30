@@ -7,9 +7,9 @@ import { useNavigate } from "react-router-dom";
 export function SampleEvaluationResumePage() {
 
     const [formData, setFormData] = useState({
-        "decisao-manejo": "",
-        "resumo-avaliacao": "",
-        "outras-infos-importantes": "",
+        "decisao-manejo-resumo-amostra": "",
+        "resumo-avaliacao-resumo-amostra": "",
+        "outras-infos-importantes-resumo-amostra": "",
     });
 
     const navigate = useNavigate();
@@ -36,7 +36,7 @@ export function SampleEvaluationResumePage() {
 
         setFormData(prev => ({
             ...prev,
-            "resumo-avaliacao": resumo.trim()
+            "resumo-avaliacao-resumo-amostra": resumo.trim()
         }));
     }, []);
 
@@ -68,7 +68,7 @@ export function SampleEvaluationResumePage() {
                     setVessScore(score);
 
                     // Salva o score no objeto de avaliação
-                    last.data["vess-score"] = score;
+                    last.data["vess-score-resumo-amostra"] = score;
                     evaluations[evaluations.length - 1] = last;
                     localStorage.setItem("userEvaluations", JSON.stringify(evaluations));
                 }
@@ -76,11 +76,29 @@ export function SampleEvaluationResumePage() {
         }
     }, []);
 
+    const saveExtraData = () => {
+        const raw = localStorage.getItem("userEvaluations");
+        if (!raw) return;
+
+        const evaluations = JSON.parse(raw);
+        const last = evaluations[evaluations.length - 1];
+        if (!last || !last.data) return;
+
+        last.data["decisao-manejo-resumo-amostra"] = formData["decisao-manejo-resumo-amostra"];
+        last.data["resumo-avaliacao-resumo-amostra"] = formData["resumo-avaliacao-resumo-amostra"];
+        last.data["outras-infos-importantes-resumo-amostra"] = formData["outras-infos-importantes-resumo-amostra"];
+
+        evaluations[evaluations.length - 1] = last;
+        localStorage.setItem("userEvaluations", JSON.stringify(evaluations));
+    };
+
     const handleSaveAndNext = () => {
+        saveExtraData();
         navigate("/avaliacoes");
     };
 
     const handleFinalize = () => {
+        saveExtraData();
         navigate("/resumo-avaliacoes-local");
     };
 
@@ -113,28 +131,28 @@ export function SampleEvaluationResumePage() {
 
             <TextAreaComponent
                 key={""}
-                name={"decisao-manejo" as keyof typeof formData}
+                name={"decisao-manejo-resumo-amostra" as keyof typeof formData}
                 label={"Decisão de manejo:"}
                 placeholder={""}
-                value={formData["decisao-manejo" as keyof typeof formData]}
+                value={formData["decisao-manejo-resumo-amostra" as keyof typeof formData]}
                 onChange={handleTextAreaChange}
             />
 
             <TextAreaComponent
                 key={""}
-                name={"resumo-avaliacao" as keyof typeof formData}
+                name={"resumo-avaliacao-resumo-amostra" as keyof typeof formData}
                 label={"Resumo da avaliação:"}
                 placeholder={""}
-                value={formData["resumo-avaliacao" as keyof typeof formData]}
+                value={formData["resumo-avaliacao-resumo-amostra" as keyof typeof formData]}
                 onChange={handleTextAreaChange}
             />
 
             <TextAreaComponent
                 key={""}
-                name={"outras-infos-importantes" as keyof typeof formData}
+                name={"outras-infos-importantes-resumo-amostra" as keyof typeof formData}
                 label={"Outras informações importantes:"}
                 placeholder={""}
-                value={formData["outras-infos-importantes" as keyof typeof formData]}
+                value={formData["outras-infos-importantes-resumo-amostra" as keyof typeof formData]}
                 onChange={handleTextAreaChange}
             />
 

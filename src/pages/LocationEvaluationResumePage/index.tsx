@@ -3,19 +3,98 @@ import { Button, Card, Center, Heading, Text, VStack } from "@chakra-ui/react";
 import { TextAreaComponent } from "../../components/TextAreaComponent";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { IAssessments, ISamples } from "../../commons/interface";
+import { useUserConfig } from "../../contexts/UserConfigContext";
+import AssessmentService from "../../service/AssessmentService";
 
 
 export function LocationEvaluationResumePage() {
 
+    const { formData: userConfig } = useUserConfig(); // Pega os dados do usuário do contexto
+    const [localEvaluations, setLocalEvaluations] = useState([]);
+    const [averageVessScore, setAverageVessScore] = useState<number | null>(null);
+
+
     const [formData, setFormData] = useState({
-        "decisao-manejo": "",
-        "resumo-avaliacao": "",
-        "outras-infos-importantes": "",
+        "decisao-manejo-resumo-avaliacao": "",
+        "resumo-avaliacao-resumo-avaliacao": ""
     });
 
     const navigate = useNavigate();
 
-    const [averageVessScore, setAverageVessScore] = useState<number | null>(null);
+    useEffect(() => {
+        const rawData = localStorage.getItem("userEvaluations"); // Usando a chave da sessão
+        if (!rawData) return;
+
+        const evaluations = JSON.parse(rawData);
+        setLocalEvaluations(evaluations);
+
+        // Lógica para calcular o score médio (exemplo)
+        const scores = evaluations
+            .map((item: any) => parseFloat(item?.data?.["vess-score-resumo-amostra"]))
+            .filter((score: number) => !isNaN(score));
+
+        if (scores.length > 0) {
+            const avg = scores.reduce((acc: number, score: number) => acc + score, 0) / scores.length;
+            setAverageVessScore(Number(avg.toFixed(2)));
+        }
+    }, []);
+
+
+    let duracaoTimeStamp = 0
+    let startTime = localStorage.getItem("startTime");
+
+    const handleSave = async () => {
+        if (!userConfig || !userConfig.email) return;
+
+        const rawData = localStorage.getItem("userEvaluations");
+        const userEvaluations = rawData ? JSON.parse(rawData) : [];
+
+        const dataInicio = startTime
+            ? new Date(Number(startTime))
+            : new Date(userEvaluations[0].createdAt);
+
+        const dataFim = new Date();
+        const tempoDeAvaliacao = dataFim.getTime() - dataInicio.getTime();
+
+        const amostrasPayload: ISamples[] = userEvaluations.map((ev: any) => ({
+            nomeAmostra: ev.data["nmr-amostra"] || "",
+            qtdCamadasAmostra: ev.data["qtdCamadas"] || 0,
+            contentImageAmostra: ev.data["contentImageAmostra"] || "string",  // ajustar conforme implementação real
+            typeImageAmostra: ev.data["typeImageAmostra"] || "string",        // ajustar conforme implementação real
+            outrasInformacoesAmostra: ev.data["infos-importantes-amostra"] || "",
+            scoreAmostra: {
+                score: parseFloat(ev.data["vess-score-resumo-amostra"]) || 0,
+                decisaoManejoScoreAmostra: ev.data["decisao-manejo-resumo-amostra"] || "",
+                resumoScoreAmostra: ev.data["resumo-avaliacao-resumo-amostra"] || "",
+                infoScoreAmostra: ev.data["outras-infos-importantes-resumo-amostra"] || "",
+            },
+            camadas: Array.from({ length: ev.data["qtdCamadas"] || 0 }, (_, i) => ({
+                comprimento: parseFloat(ev.data[`comprimento-camada-${i + 1}`]) || 0,
+                nota: parseFloat(ev.data[`nota-camada-${i + 1}`]) || 0,
+            })),
+        }));
+
+        const finalPayload: IAssessments = {
+            localAmostra: userEvaluations[0]?.data["local-propriedade"] || "",
+            scoreFinal: averageVessScore || 0,
+            decisaoManejoAvaliacao: formData["decisao-manejo-resumo-avaliacao"],
+            resumoAvaliacao: formData["resumo-avaliacao-resumo-avaliacao"],
+            dataInicioAvaliacao: dataInicio,
+            dataFimAvaliacao: dataFim,
+            tempoDeAvaliacao: tempoDeAvaliacao,
+            amostras: amostrasPayload
+        };
+
+        try {
+            await AssessmentService.save(finalPayload, userConfig.email);
+            localStorage.removeItem("userEvaluations");
+            navigate("/");
+        } catch (error) {
+            console.error("Erro ao enviar avaliação:", error);
+        }
+    };
+
 
     useEffect(() => {
         const raw = localStorage.getItem("userEvaluations");
@@ -27,14 +106,14 @@ export function LocationEvaluationResumePage() {
 
         const avaliador = ultimaAvaliacao?.data?.avaliador || "-";
 
-        const startTime = localStorage.getItem("startTime");
+
         let duration = "Duração desconhecida";
 
         if (startTime) {
             const start = new Date(startTime);
             const end = new Date();
             const diffMs = end.getTime() - start.getTime();
-
+            duracaoTimeStamp = diffMs
             const diffSecsTotal = Math.floor(diffMs / 1000);
             const diffHrs = Math.floor(diffSecsTotal / 3600);
             const diffMins = Math.floor((diffSecsTotal % 3600) / 60);
@@ -51,7 +130,7 @@ export function LocationEvaluationResumePage() {
 
         setFormData(prev => ({
             ...prev,
-            "resumo-avaliacao": resumo
+            "resumo-avaliacao-resumo-avaliacao": resumo
         }));
     }, []);
 
@@ -60,7 +139,7 @@ export function LocationEvaluationResumePage() {
         if (rawData) {
             const evaluations = JSON.parse(rawData);
             const scores = evaluations
-                .map((item: any) => parseFloat(item?.data?.["vess-score"]))
+                .map((item: any) => parseFloat(item?.data?.["vess-score-resumo-amostra"]))
                 .filter((score: number) => !isNaN(score));
 
             if (scores.length > 0) {
@@ -76,11 +155,6 @@ export function LocationEvaluationResumePage() {
             ...prevData,
             [name]: value,
         }));
-    };
-
-    const handleSave = () => {
-        localStorage.removeItem("userEvaluations");
-        navigate("/");
     };
 
     return (
@@ -108,22 +182,21 @@ export function LocationEvaluationResumePage() {
             </Card.Root>
 
             <TextAreaComponent
-                key={""}
-                name={"decisao-manejo" as keyof typeof formData}
+                name="decisao-manejo-resumo-avaliacao"
                 label={"Decisão de manejo para o local:"}
                 placeholder={""}
-                value={formData["decisao-manejo" as keyof typeof formData]}
+                value={formData["decisao-manejo-resumo-avaliacao"]}
                 onChange={handleTextAreaChange}
             />
 
             <TextAreaComponent
-                key={""}
-                name={"resumo-avaliacao" as keyof typeof formData}
+                name="resumo-avaliacao-resumo-avaliacao"
                 label={"Resumo da avaliação:"}
                 placeholder={""}
-                value={formData["resumo-avaliacao" as keyof typeof formData]}
+                value={formData["resumo-avaliacao-resumo-avaliacao"]}
                 onChange={handleTextAreaChange}
             />
+
 
             <Button
                 size="lg"

@@ -23,7 +23,8 @@ export function EvaluationPage() {
         "comprimento-camada-5": "",
         "nota-camada-5": "",
         "avaliador": "",
-        "infos-importantes": "",
+        "infos-importantes-amostra": "",
+        "qtdCamadas": "1",
     };
 
     const evaluationProcessInputs = [
@@ -72,7 +73,10 @@ export function EvaluationPage() {
             const newEvaluation = {
                 id: Date.now(),
                 createdAt: new Date().toISOString(),
-                data: formData,
+                data: {
+                    ...formData,
+                    qtdCamadas: visibleLayers,
+                },
             };
 
             existingEvaluations.push(newEvaluation);
@@ -206,10 +210,10 @@ export function EvaluationPage() {
 
                 <TextAreaComponent
                     key={""}
-                    name={"infos-importantes" as keyof typeof formData}
+                    name={"infos-importantes-amostra" as keyof typeof formData}
                     label={"Outras informações importantes:"}
                     placeholder={""}
-                    value={formData["infos-importantes" as keyof typeof formData]}
+                    value={formData["infos-importantes-amostra" as keyof typeof formData]}
                     onChange={handleTextAreaChange}
                 />
                 <Flex py={6} px={3}>

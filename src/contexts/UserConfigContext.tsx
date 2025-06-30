@@ -1,11 +1,12 @@
-import { createContext, useContext, useState, ReactNode, Dispatch, SetStateAction } from 'react';
+import { createContext, useContext, useState, ReactNode, Dispatch, SetStateAction, useEffect } from 'react';
+import { ICountry, ILanguage } from '../commons/interface';
 
 type FormData = {
   nome: string;
   email: string;
-  pais: string;
+  pais: ICountry | null;
   endereco: string;
-  idioma: string;
+  idioma: ILanguage | null;
 };
 
 type UserConfigContextType = {
@@ -19,10 +20,21 @@ export const UserConfigProvider = ({ children }: { children: ReactNode }) => {
   const [formData, setFormData] = useState<FormData>({
     nome: '',
     email: '',
-    pais: '',
+    pais: null,
     endereco: '',
-    idioma: '',
+    idioma: null,
   });
+
+  useEffect(() => {
+      const savedData = localStorage.getItem('userConfig');
+      if (savedData) {
+        try {
+          setFormData(JSON.parse(savedData));
+        } catch (error) {
+          console.error("Erro ao carregar dados do Contexto", error);
+        }
+      }
+  }, []);
 
   return (
     <UserConfigContext.Provider value={{ formData, setFormData }}>
