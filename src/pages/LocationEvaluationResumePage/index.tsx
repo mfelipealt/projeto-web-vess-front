@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { IAssessments, ISamples } from "../../commons/interface";
 import { useUserConfig } from "../../contexts/UserConfigContext";
 import AssessmentService from "../../service/AssessmentService";
-
+import { toaster } from "../../components/ui/toaster";
 
 export function LocationEvaluationResumePage() {
 
@@ -21,6 +21,7 @@ export function LocationEvaluationResumePage() {
     });
 
     const navigate = useNavigate();
+    const [sampleLocation, setSampleLocation] = useState<string>('');
 
     useEffect(() => {
         const rawData = localStorage.getItem("userEvaluations");
@@ -28,6 +29,11 @@ export function LocationEvaluationResumePage() {
 
         const evaluations = JSON.parse(rawData);
         setLocalEvaluations(evaluations);
+
+        const last = evaluations[evaluations.length - 1];
+        if (!last || !last.data) return;
+        const data = last.data;
+        setSampleLocation(data["local-propriedade"] || "N/A");
 
         const scores = evaluations
             .map((item: any) => parseFloat(item?.data?.["vess-score-resumo-amostra"]))
@@ -46,6 +52,14 @@ export function LocationEvaluationResumePage() {
     const handleSave = async () => {
         if (!userConfig || !userConfig.email) return;
 
+        if (!formData['decisao-manejo-resumo-avaliacao'] || !formData['resumo-avaliacao-resumo-avaliacao']) {
+            toaster.error({
+                title: "Campos obrigatórios",
+                description: "Por favor, preencha a Decisão de manejo para o local e o Resumo da avaliação.",
+            });
+            return;
+        }
+
         const rawData = localStorage.getItem("userEvaluations");
         const userEvaluations = rawData ? JSON.parse(rawData) : [];
 
@@ -59,7 +73,7 @@ export function LocationEvaluationResumePage() {
         const amostrasPayload: ISamples[] = userEvaluations.map((ev: any) => ({
             nomeAmostra: ev.data["nmr-amostra"] || "",
             qtdCamadasAmostra: ev.data["qtdCamadas"] || 0,
-            contentImageAmostra: ev.data["contentImageAmostra"] || "", 
+            contentImageAmostra: ev.data["contentImageAmostra"] || "",
             typeImageAmostra: ev.data["typeImageAmostra"] || "",
             outrasInformacoesAmostra: ev.data["infos-importantes-amostra"] || "",
             scoreAmostra: {
@@ -163,7 +177,9 @@ export function LocationEvaluationResumePage() {
                 AVALIAÇÕES
             </Heading>
 
-            <Center flexDirection="column" textAlign="center"><Text>Escore Qe-VESS médio do local X:</Text> </Center>
+            <Center flexDirection="column" textAlign="center">
+                <Text>Escore Qe-VESS médio do local {sampleLocation}:</Text>
+            </Center>
 
             <Card.Root>
                 <Card.Body>

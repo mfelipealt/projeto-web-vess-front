@@ -1,5 +1,5 @@
 
-import { Box, Button, Center, Flex, Heading, Icon, SimpleGrid, Text, Tooltip, VStack } from "@chakra-ui/react";
+import { Box, Button, Center, Flex, Heading, Icon, SimpleGrid, Spinner, Text, VStack } from "@chakra-ui/react";
 import { CardMenu } from "../../components/CardMenu";
 import {
   FaTools,
@@ -18,6 +18,8 @@ import { useClearEvaluationsOnMount } from "../../hooks/useClearEvaluationsOnMou
 import { useEffect, useState } from "react";
 import { useUserConfig } from "../../contexts/UserConfigContext";
 import UserService from "../../service/UserService";
+import { toaster } from "../../components/ui/toaster";
+import { Tooltip } from "../../components/ui/tooltip"; 
 
 export function HomePage() {
 
@@ -35,6 +37,14 @@ export function HomePage() {
         if (response && response.data) {
           setIsUserValid(true);
         } else {
+          toaster.error({
+            title: "Usuário não encontrado",
+            description: "Seu perfil foi configurado mas não encontrado no servidor. Por favor, cadastre-se novamente.",
+            action: {
+              label: "Ir para Configurações",
+              onClick: () => navigate("/configuracoes"),
+            },
+          });
           setIsUserValid(false);
         }
       } catch (error) {
@@ -46,7 +56,7 @@ export function HomePage() {
     };
 
     verifyUser();
-  }, [userConfig.email]);
+  }, [userConfig.email, navigate]);
 
   const handleClick = () => {
     if (!isUserValid) return;
@@ -87,19 +97,32 @@ export function HomePage() {
         </Center>
 
         <Center>
-          <Tooltip.Root
+          <Tooltip
+            content="Cadastre um usuário nas Configurações para poder avaliar."
             disabled={isUserValid || isLoading}
+            showArrow
+            contentProps={{
+              css: {
+                bg: "red.600",
+                px: 3, 
+                py: 2, 
+                borderRadius: "md",
+              },
+            }}
           >
             <Button
               colorScheme="teal"
               size="lg"
               w={{ base: "100%", md: "auto" }}
               onClick={handleClick}
-              disabled={!isUserValid || isLoading}              
+              disabled={!isUserValid || isLoading}
+              loading={isLoading}
+              loadingText="Verificando..."
+              spinnerPlacement="start"
             >
-              {isLoading ? "Verificando..." : "Avaliar"}
+              Avaliar
             </Button>
-          </Tooltip.Root>
+          </Tooltip>
         </Center>
 
         <Flex

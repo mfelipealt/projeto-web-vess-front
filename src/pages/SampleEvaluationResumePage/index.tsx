@@ -3,6 +3,7 @@ import { Button, Card, Center, Heading, Stack, Text, VStack } from "@chakra-ui/r
 import { TextAreaComponent } from "../../components/TextAreaComponent";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toaster } from "../../components/ui/toaster";
 
 export function SampleEvaluationResumePage() {
 
@@ -13,6 +14,8 @@ export function SampleEvaluationResumePage() {
     });
 
     const navigate = useNavigate();
+    const [sampleNumber, setSampleNumber] = useState<string>('');
+
 
     useEffect(() => {
         const raw = localStorage.getItem("userEvaluations");
@@ -23,6 +26,9 @@ export function SampleEvaluationResumePage() {
         if (!last || !last.data) return;
 
         const data = last.data;
+        
+        setSampleNumber(data["nmr-amostra"] || "N/A");
+
         let resumo = "";
 
         for (let i = 1; i <= 5; i++) {
@@ -90,11 +96,25 @@ export function SampleEvaluationResumePage() {
     };
 
     const handleSaveAndNext = () => {
+        if (!formData['decisao-manejo-resumo-amostra'] || !formData['resumo-avaliacao-resumo-amostra'] || !formData['outras-infos-importantes-resumo-amostra']) {
+            toaster.error({
+                title: "Campos obrigatórios",
+                description: "Por favor, preencha a Decisão de manejo, Resumo da avaliação e Outras informações importantes.",
+            });
+            return;
+        }
         saveExtraData();
         navigate("/avaliacoes");
     };
 
     const handleFinalize = () => {
+        if (!formData['decisao-manejo-resumo-amostra'] || !formData['resumo-avaliacao-resumo-amostra'] || !formData['outras-infos-importantes-resumo-amostra']) {
+            toaster.error({
+                title: "Campos obrigatórios",
+                description: "Por favor, preencha a Decisão de manejo, Resumo da avaliação e Outras informações importantes.",
+            });
+            return;
+        }
         saveExtraData();
         navigate("/resumo-avaliacoes-local");
     };
@@ -114,7 +134,10 @@ export function SampleEvaluationResumePage() {
                 AVALIAÇÕES
             </Heading>
 
-            <Center flexDirection="column" textAlign="center"><Text>Escore Qe-VESS da amostra X:</Text> </Center>
+            <Center flexDirection="column" textAlign="center">
+                <Text>Escore Qe-VESS da amostra {sampleNumber}:</Text>
+            </Center>
+
 
             <Card.Root>
                 <Card.Body>
@@ -154,7 +177,7 @@ export function SampleEvaluationResumePage() {
             />
 
             <Stack
-                direction={{ base: 'column', md: 'column', lg: "row" }} 
+                direction={{ base: 'column', md: 'column', lg: "row" }}
                 spaceX={4}
                 pt={6}
                 maxW={{ base: "100%", md: "100%", lg: "48%" }}

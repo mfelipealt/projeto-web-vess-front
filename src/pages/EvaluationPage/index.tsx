@@ -1,5 +1,5 @@
 
-import { Button, ButtonGroup, FileUpload, Flex, Heading, IconButton, Stack, Text } from "@chakra-ui/react";
+import { Button, ButtonGroup, FileUpload, Flex, Heading, IconButton, Stack, Text, Float, useFileUploadContext } from "@chakra-ui/react";
 import { InputComponent } from "../../components/InputComponent";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -7,6 +7,9 @@ import { TextAreaComponent } from "../../components/TextAreaComponent";
 import {
     FaCamera
 } from "react-icons/fa";
+import { LuFileImage, LuX } from "react-icons/lu"
+import { toaster } from "../../components/ui/toaster";
+
 
 export function EvaluationPage() {
 
@@ -22,11 +25,12 @@ export function EvaluationPage() {
         "nota-camada-4": "",
         "comprimento-camada-5": "",
         "nota-camada-5": "",
+        "local-propriedade": "",
         "avaliador": "",
         "infos-importantes-amostra": "",
         "qtdCamadas": "1",
-        "contentImageAmostra": "", 
-        "typeImageAmostra": "",   
+        "contentImageAmostra": "",
+        "typeImageAmostra": "",
     };
 
     const evaluationProcessInputs = [
@@ -63,11 +67,11 @@ export function EvaluationPage() {
             };
 
             reader.onload = () => {
-                const base64String = reader.result as string; 
+                const base64String = reader.result as string;
                 setFormData(prevData => ({
                     ...prevData,
                     contentImageAmostra: base64String,
-                    typeImageAmostra: file.type, 
+                    typeImageAmostra: file.type,
                 }));
                 setIsConvertingImage(false);
             };
@@ -95,6 +99,32 @@ export function EvaluationPage() {
     const navigate = useNavigate();
 
     const handleSaveAndEvaluate = () => {
+        if (!formData['nmr-amostra'] || !formData['local-propriedade'] || !formData['avaliador'] || !formData['infos-importantes-amostra']) {
+            toaster.error({
+                title: "Campos obrigatórios",
+                description: "Por favor, preencha o Nº da Amostra, Local/Propriedade, Avaliador e Outras Informações Importantes.",
+            });
+            return;
+        }
+        for (let i = 1; i <= visibleLayers; i++) {
+            const comprimentoKey = `comprimento-camada-${i}` as keyof typeof formData;
+            const notaKey = `nota-camada-${i}` as keyof typeof formData;
+
+            if (!formData[comprimentoKey] || !formData[notaKey]) {
+                toaster.error({
+                    title: "Camadas incompletas",
+                    description: `Por favor, preencha o comprimento e a nota para a Camada ${i}.`,
+                });
+                return;
+            }
+        }
+        if (!formData.contentImageAmostra) {
+            toaster.error({
+                title: "Imagem não enviada",
+                description: "Por favor, envie uma imagem da amostra.",
+            });
+            return;
+        }
         try {
             const existingEvaluationsRaw = localStorage.getItem('userEvaluations');
             const existingEvaluations = existingEvaluationsRaw ? JSON.parse(existingEvaluationsRaw) : [];
@@ -156,6 +186,32 @@ export function EvaluationPage() {
     }, []);
 
     const [visibleLayers, setVisibleLayers] = useState(1);
+
+    const FileUploadList = () => {
+        const fileUpload = useFileUploadContext()
+        const files = fileUpload.acceptedFiles
+        if (files.length === 0) return null
+        return (
+            <FileUpload.ItemGroup>
+                {files.map((file) => (
+                    <FileUpload.Item
+                        w="auto"
+                        boxSize="20"
+                        p="2"
+                        file={file}
+                        key={file.name}
+                    >
+                        <FileUpload.ItemPreviewImage />
+                        <Float placement="top-end">
+                            <FileUpload.ItemDeleteTrigger boxSize="4" layerStyle="fill.solid">
+                                <LuX />
+                            </FileUpload.ItemDeleteTrigger>
+                        </Float>
+                    </FileUpload.Item>
+                ))}
+            </FileUpload.ItemGroup>
+        )
+    }
 
     return (
         <Stack
@@ -234,6 +290,7 @@ export function EvaluationPage() {
                                 <FaCamera />
                             </IconButton>
                         </FileUpload.Trigger>
+                        <FileUploadList />
                     </FileUpload.Root>
                 </Stack>
 
