@@ -25,6 +25,8 @@ export function EvaluationPage() {
         "avaliador": "",
         "infos-importantes-amostra": "",
         "qtdCamadas": "1",
+        "contentImageAmostra": "", // Adicionar campo
+        "typeImageAmostra": "",   // Adicionar campo
     };
 
     const evaluationProcessInputs = [
@@ -46,6 +48,40 @@ export function EvaluationPage() {
     ];
 
     const [formData, setFormData] = useState(initialEvaluationData);
+    const [isConvertingImage, setIsConvertingImage] = useState(false);
+
+    const handleImageChange = (acceptedFiles: File[]) => {
+        if (acceptedFiles && acceptedFiles.length > 0) {
+            const file = acceptedFiles[0];
+
+            const reader = new FileReader();
+
+            reader.onloadstart = () => setIsConvertingImage(true);
+            reader.onerror = () => {
+                console.error("Erro ao ler o arquivo de imagem.");
+                setIsConvertingImage(false);
+            };
+
+            // Quando a conversão estiver completa
+            reader.onload = () => {
+                const base64String = reader.result as string; // ex: "data:image/jpeg;base64,..."
+
+                // O resultado já inclui o tipo MIME e o conteúdo em base64
+                // Vamos salvar a string inteira em 'contentImageAmostra'
+                // e extrair o tipo para 'typeImageAmostra'
+                setFormData(prevData => ({
+                    ...prevData,
+                    contentImageAmostra: base64String,
+                    typeImageAmostra: file.type, // ex: "image/jpeg"
+                }));
+                setIsConvertingImage(false);
+            };
+
+            // Inicia a conversão
+            reader.readAsDataURL(file);
+        }
+    };
+
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -82,7 +118,7 @@ export function EvaluationPage() {
             existingEvaluations.push(newEvaluation);
             localStorage.setItem('userEvaluations', JSON.stringify(existingEvaluations));
 
-            setFormData(initialEvaluationData); 
+            setFormData(initialEvaluationData);
             navigate("/resumo-avaliacoes-amostra");
 
         } catch (error) {
@@ -198,7 +234,7 @@ export function EvaluationPage() {
             <Flex direction={"column"} w={{ base: "100%", md: "80%", lg: "60%" }}>
                 <Stack>
                     <Text>Enviar Imagens</Text>
-                    <FileUpload.Root accept="image/*" >
+                    <FileUpload.Root accept="image/*" onFileChange={(details) => handleImageChange(details.acceptedFiles)}>
                         <FileUpload.HiddenInput />
                         <FileUpload.Trigger asChild ml={4}>
                             <IconButton aria-label="Call support" rounded="full">

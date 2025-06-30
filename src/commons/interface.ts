@@ -67,3 +67,54 @@ export interface ISampleScore {
     // outras-infos-importantes-resumo-amostra
     infoScoreAmostra: string;
 }
+
+export interface IAssessmentResponse {
+    id: number;
+    usuario: IUserResponse;
+    localAmostra: string;
+    scoreFinal: number;
+    decisaoManejoAvaliacao: string;
+    resumoAvaliacao: string;
+    dataInicioAvaliacao: Date;
+    dataFimAvaliacao: Date;
+    tempoDeAvaliacao: number;
+    amostrasAvaliacao: IAmostraAvaliacao[];
+}
+
+export interface IUserResponse {
+    id: number;
+    nome: string;
+    email: string;
+    pais: ICountry & { id: number }; // Adiciona o ID ao tipo existente
+    endereco: string;
+    idioma: ILanguage & { id: number }; // Adiciona o ID ao tipo existente
+}
+
+export interface IAmostraAvaliacao {
+    id: number;
+    amostra: IAmostraResponse;
+}
+
+export interface IAmostraResponse {
+    id: number;
+    nomeAmostra: string;
+    qtdCamadasAmostra: number;
+    imagemNomeArquivo: string; // O nome do arquivo salvo no Minio
+    outrasInformacoesAmostra: string;
+    scoreAmostra: ISampleScoreResponse;
+    camadas: ILayerResponse[];
+}
+
+export interface ISampleScoreResponse {
+    id: number;
+    score: number;
+    decisaoManejoScoreAmostra: string;
+    resumoScoreAmostra: string;
+    infoScoreAmostra: string;
+}
+
+export interface ILayerResponse {
+    id: number;
+    comprimento: number;
+    nota: number;
+}

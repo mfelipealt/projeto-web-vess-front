@@ -5,6 +5,7 @@ import { TermsAndConditionsPage } from "../../pages/TermsAndConditionsPage";
 import { EvaluationPage } from "../../pages/EvaluationPage";
 import { SampleEvaluationResumePage } from "../../pages/SampleEvaluationResumePage";
 import { LocationEvaluationResumePage } from "../../pages/LocationEvaluationResumePage";
+import { HistoryPage } from "../../pages/HistoryPage";
 
 export function BaseRoutes() {
   return (
@@ -17,6 +18,7 @@ export function BaseRoutes() {
         <Route path="/avaliacoes" element={<EvaluationPage />} />
         <Route path="/resumo-avaliacoes-amostra" element={<SampleEvaluationResumePage />} />
         <Route path="/resumo-avaliacoes-local" element={<LocationEvaluationResumePage />} />
+        <Route path="/historico-avaliacoes" element={<HistoryPage />} />
       </Routes>
     </>
   );

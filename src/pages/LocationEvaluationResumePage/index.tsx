@@ -10,7 +10,7 @@ import AssessmentService from "../../service/AssessmentService";
 
 export function LocationEvaluationResumePage() {
 
-    const { formData: userConfig } = useUserConfig(); 
+    const { formData: userConfig } = useUserConfig();
     const [localEvaluations, setLocalEvaluations] = useState([]);
     const [averageVessScore, setAverageVessScore] = useState<number | null>(null);
 
@@ -23,7 +23,7 @@ export function LocationEvaluationResumePage() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const rawData = localStorage.getItem("userEvaluations"); 
+        const rawData = localStorage.getItem("userEvaluations");
         if (!rawData) return;
 
         const evaluations = JSON.parse(rawData);
@@ -59,8 +59,8 @@ export function LocationEvaluationResumePage() {
         const amostrasPayload: ISamples[] = userEvaluations.map((ev: any) => ({
             nomeAmostra: ev.data["nmr-amostra"] || "",
             qtdCamadasAmostra: ev.data["qtdCamadas"] || 0,
-            contentImageAmostra: ev.data["contentImageAmostra"] || "string",  
-            typeImageAmostra: ev.data["typeImageAmostra"] || "string",      
+            contentImageAmostra: ev.data["contentImageAmostra"] || "", 
+            typeImageAmostra: ev.data["typeImageAmostra"] || "",
             outrasInformacoesAmostra: ev.data["infos-importantes-amostra"] || "",
             scoreAmostra: {
                 score: parseFloat(ev.data["vess-score-resumo-amostra"]) || 0,

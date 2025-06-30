@@ -38,7 +38,7 @@ export function HomePage() {
     { icon: <FaBook size="1.5em" />, title: "Decisão Manejo", path: "/decisao" },
     { icon: <FaHistory size="1.5em" />, title: "Informações Complementares", path: "/decisao" },
     { icon: <FaQuestionCircle size="1.5em" />, title: "O que é o VESS", path: "/decisao" },
-    { icon: <FaBook size="1.5em" />, title: "Minhas\nAvaliações", path: "/decisao" },
+    { icon: <FaBook size="1.5em" />, title: "Minhas\nAvaliações", path: "/historico-avaliacoes" },
     { icon: <FaHistory size="1.5em" />, title: "Sobre o APP", path: "/decisao" },
     { icon: <FaQuestionCircle size="1.5em" />, title: "Configurações", path: "/configuracoes" },
   ];

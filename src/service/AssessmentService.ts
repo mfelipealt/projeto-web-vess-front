@@ -15,8 +15,21 @@ export const save = async (payload: IAssessments, userEmail: string): Promise<an
     return response;
 }
 
+export const userHistory = async (userEmail: string, userName: string): Promise<any> => {
+    let response;
+    try {
+        response = await api.get(`${URL}/history?email=${userEmail}&nome=${userName}`);
+    } catch (error: any) {
+        console.error("Erro no serviço ao buscar histórico:", error);
+        response = error.response;
+        throw error;
+    }
+    return response;
+}
+
 const AssessmentService = {
-  save
+  save,
+  userHistory
 };
 
 export default AssessmentService;
