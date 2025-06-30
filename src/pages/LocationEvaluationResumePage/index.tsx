@@ -50,7 +50,7 @@ export function LocationEvaluationResumePage() {
         const userEvaluations = rawData ? JSON.parse(rawData) : [];
 
         const dataInicio = startTime
-            ? new Date(Number(startTime))
+            ? new Date(startTime)
             : new Date(userEvaluations[0].createdAt);
 
         const dataFim = new Date();

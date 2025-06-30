@@ -14,8 +14,20 @@ import {
   FaShare
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 export function HomePage() {
+
+  useEffect(() => {
+      async function fetchData() {
+        try {
+          localStorage.removeItem("userEvaluations");
+        } catch (error) {
+          console.error("Erro ao buscar dados de país/idioma:", error);
+        }
+      }
+      fetchData();
+    }, []);
 
   const navigate = useNavigate()
 
