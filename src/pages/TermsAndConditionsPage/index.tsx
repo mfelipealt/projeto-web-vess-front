@@ -28,7 +28,11 @@ export const TermsAndConditionsPage = () => {
       idioma: formData.idioma       
     };
     try {
-      await UserService.save(payload);
+      try{
+        await UserService.find(payload.email);
+      }catch{
+        await UserService.save(payload);
+      }
       localStorage.setItem('userConfig', JSON.stringify(formData));
       navigate('/home');
     } catch (error) {
