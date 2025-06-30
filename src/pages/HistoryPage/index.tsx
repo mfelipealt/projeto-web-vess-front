@@ -4,18 +4,15 @@ import {
     Heading,
     VStack,
     Text,
-    Accordion, // O import principal permanece o mesmo
+    Accordion,
     Image,
-    
-    CardBody,
-    Span, // Importe o Span para usar dentro do Trigger
+    Span,
     Card
 } from '@chakra-ui/react';
 import { useUserConfig } from '../../contexts/UserConfigContext';
 import AssessmentService from '../../service/AssessmentService';
-import { IAssessmentResponse, IAssessments } from '../../commons/interface';
-
-const API_BASE_URL = 'http://localhost:8025';
+import { IAssessmentResponse } from '../../commons/interface';
+import { api } from '../../lib/axiios';
 
 export function HistoryPage() {
     const { formData: userConfig } = useUserConfig();
@@ -23,7 +20,6 @@ export function HistoryPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    // NENHUMA MUDANÇA NA LÓGICA DE BUSCA DE DADOS
     useEffect(() => {
         const fetchHistory = async () => {
             if (userConfig.email && userConfig.nome) {
@@ -48,9 +44,8 @@ export function HistoryPage() {
         fetchHistory();
     }, [userConfig.email, userConfig.nome]);
 
-    // As renderizações de loading e erro continuam iguais...
-    if (loading) { /* ... */ }
-    if (error) { /* ... */ }
+    if (loading) { }
+    if (error) { }
 
     return (
         <VStack as="main" p={{ base: 4, md: 8 }} spaceX={8} align="stretch" maxW="1200px" mx="auto">
@@ -61,24 +56,18 @@ export function HistoryPage() {
             {history.length === 0 ? (
                 <Text textAlign="center">Nenhuma avaliação encontrada em seu histórico.</Text>
             ) : (
-                // O componente principal agora é Accordion.Root
-                // 'collapsible' permite que um item aberto seja fechado.
                 <Accordion.Root collapsible>
                     {history.map((assessment) => (
-                        // Accordion.Item agora precisa de uma prop 'value' (string)
                         <Accordion.Item key={assessment.id} value={assessment.id.toString()}>
-                            {/* O antigo AccordionButton agora é Accordion.ItemTrigger */}
                             <Accordion.ItemTrigger>
                                 <Span flex='1' textAlign='left' fontWeight="bold">
                                     Avaliação de {new Date(assessment.dataFimAvaliacao).toLocaleDateString('pt-BR')}
                                     {' - '}
                                     Score Final: {assessment.scoreFinal.toFixed(2)}
                                 </Span>
-                                {/* O ícone de expandir/recolher é agora um componente explícito */}
                                 <Accordion.ItemIndicator />
                             </Accordion.ItemTrigger>
 
-                            {/* O conteúdo do painel vai dentro de ItemContent e ItemBody */}
                             <Accordion.ItemContent>
                                 <Accordion.ItemBody>
                                     <Box p={4} bg="gray.50">
@@ -93,11 +82,10 @@ export function HistoryPage() {
                                                     <Image
                                                         objectFit='cover'
                                                         maxW={{ base: '100%', sm: '200px' }}
-                                                        src={`${API_BASE_URL}/samples/${amostra.id}/imagem`}
+                                                        src={`${api.defaults.baseURL}/samples/${amostra.id}/imagem`}
                                                         alt={`Imagem da amostra ${amostra.nomeAmostra}`}
                                                     />
                                                 )}
-                                                {/* 3. Card.Body é usado para agrupar o conteúdo do card */}
                                                 <Card.Body>
                                                     <Heading size='md'>Amostra: {amostra.nomeAmostra || 'Sem nome'}</Heading>
                                                     <Text py='2'>

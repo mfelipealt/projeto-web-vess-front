@@ -25,8 +25,8 @@ export function EvaluationPage() {
         "avaliador": "",
         "infos-importantes-amostra": "",
         "qtdCamadas": "1",
-        "contentImageAmostra": "", // Adicionar campo
-        "typeImageAmostra": "",   // Adicionar campo
+        "contentImageAmostra": "", 
+        "typeImageAmostra": "",   
     };
 
     const evaluationProcessInputs = [
@@ -62,22 +62,15 @@ export function EvaluationPage() {
                 setIsConvertingImage(false);
             };
 
-            // Quando a conversão estiver completa
             reader.onload = () => {
-                const base64String = reader.result as string; // ex: "data:image/jpeg;base64,..."
-
-                // O resultado já inclui o tipo MIME e o conteúdo em base64
-                // Vamos salvar a string inteira em 'contentImageAmostra'
-                // e extrair o tipo para 'typeImageAmostra'
+                const base64String = reader.result as string; 
                 setFormData(prevData => ({
                     ...prevData,
                     contentImageAmostra: base64String,
-                    typeImageAmostra: file.type, // ex: "image/jpeg"
+                    typeImageAmostra: file.type, 
                 }));
                 setIsConvertingImage(false);
             };
-
-            // Inicia a conversão
             reader.readAsDataURL(file);
         }
     };

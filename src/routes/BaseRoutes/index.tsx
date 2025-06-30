@@ -6,6 +6,8 @@ import { EvaluationPage } from "../../pages/EvaluationPage";
 import { SampleEvaluationResumePage } from "../../pages/SampleEvaluationResumePage";
 import { LocationEvaluationResumePage } from "../../pages/LocationEvaluationResumePage";
 import { HistoryPage } from "../../pages/HistoryPage";
+import { QEVessPage } from "../../pages/QEVessPage";
+import { GenericInfoPage } from "../../pages/GenericInfoPage";
 
 export function BaseRoutes() {
   return (
@@ -19,6 +21,8 @@ export function BaseRoutes() {
         <Route path="/resumo-avaliacoes-amostra" element={<SampleEvaluationResumePage />} />
         <Route path="/resumo-avaliacoes-local" element={<LocationEvaluationResumePage />} />
         <Route path="/historico-avaliacoes" element={<HistoryPage />} />
+        <Route path="/qualidade-estrutural-vess" element={<QEVessPage />} />
+        <Route path="/info/:pageId" element={<GenericInfoPage />} />
       </Routes>
     </>
   );

@@ -85,9 +85,9 @@ export interface IUserResponse {
     id: number;
     nome: string;
     email: string;
-    pais: ICountry & { id: number }; // Adiciona o ID ao tipo existente
+    pais: ICountry & { id: number };
     endereco: string;
-    idioma: ILanguage & { id: number }; // Adiciona o ID ao tipo existente
+    idioma: ILanguage & { id: number };
 }
 
 export interface IAmostraAvaliacao {
@@ -99,7 +99,7 @@ export interface IAmostraResponse {
     id: number;
     nomeAmostra: string;
     qtdCamadasAmostra: number;
-    imagemNomeArquivo: string; // O nome do arquivo salvo no Minio
+    imagemNomeArquivo: string; 
     outrasInformacoesAmostra: string;
     scoreAmostra: ISampleScoreResponse;
     camadas: ILayerResponse[];

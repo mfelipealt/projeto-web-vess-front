@@ -1,5 +1,5 @@
 
-import { Box, Button, Center, Flex, Heading, Icon, SimpleGrid, VStack } from "@chakra-ui/react";
+import { Box, Button, Center, Flex, Heading, Icon, SimpleGrid, Text, VStack } from "@chakra-ui/react";
 import { CardMenu } from "../../components/CardMenu";
 import { 
   FaTools,  
@@ -26,20 +26,20 @@ export function HomePage() {
   };
 
   const evaluationProcessCards = [
-    { icon: <FaTools size="1.5em" />, title: "Equipamentos", path: "/decisao" },
-    { icon: <FaMap size="1.5em" />, title: "Onde\nAmostrar", path: "/decisao" },
-    { icon: <FaClipboardList size="1.5em" />, title: "Quando\nAmostrar", path: "/decisao" },
-    { icon: <FaFileSignature size="1.5em" />, title: "Extração da Amostra", path: "/decisao" },
-    { icon: <FaChartLine size="1.5em" />, title: "Fragmentação\nAmostra", path: "/decisao" },
-    { icon: <FaCog size="1.5em" />, title: "Escores VESS", path: "/decisao" },
+    { icon: <FaTools size="1.5em" />, title: "Equipamentos", path: "/info/equipamentos" }, 
+    { icon: <FaMap size="1.5em" />, title: "Onde\nAmostrar", path: "/info/onde-amostrar" }, 
+    { icon: <FaClipboardList size="1.5em" />, title: "Quando\nAmostrar", path: "/info/quando-amostrar" },
+    { icon: <FaFileSignature size="1.5em" />, title: "Extração da Amostra", path: "/info/extracao-amostra" },
+    { icon: <FaChartLine size="1.5em" />, title: "Fragmentação\nAmostra", path: "/info/fragmentacao-amostra" },
+    { icon: <FaCog size="1.5em" />, title: "Escores VESS", path: "/qualidade-estrutural-vess" },
   ];
 
   const extraCards = [
-    { icon: <FaBook size="1.5em" />, title: "Decisão Manejo", path: "/decisao" },
-    { icon: <FaHistory size="1.5em" />, title: "Informações Complementares", path: "/decisao" },
-    { icon: <FaQuestionCircle size="1.5em" />, title: "O que é o VESS", path: "/decisao" },
+    { icon: <FaBook size="1.5em" />, title: "Decisão Manejo", path: "/info/decisao-manejo" },
+    { icon: <FaHistory size="1.5em" />, title: "Informações Complementares", path: "/info/informacoes-complementares" },
+    { icon: <FaQuestionCircle size="1.5em" />, title: "O que é o VESS", path: "/info/oque-e-o-vess" },
     { icon: <FaBook size="1.5em" />, title: "Minhas\nAvaliações", path: "/historico-avaliacoes" },
-    { icon: <FaHistory size="1.5em" />, title: "Sobre o APP", path: "/decisao" },
+    { icon: <FaHistory size="1.5em" />, title: "Sobre o APP", path: "/info/sobre-o-app" },
     { icon: <FaQuestionCircle size="1.5em" />, title: "Configurações", path: "/configuracoes" },
   ];
 
@@ -49,6 +49,12 @@ export function HomePage() {
         <Heading as="h1" textAlign="center" size="2xl" color="teal.600">
           VESS
         </Heading>
+        <Center>
+          <Text>
+            Bem vindo!
+            Recomendamos a leitura de toda a aba “Processo de avaliação" antes do uso da aplicação.
+          </Text>
+        </Center>
 
         <Center>
           <Button colorScheme="teal" size="lg" w={{ base: "100%", md: "auto" }} onClick={handleClick}>
@@ -60,7 +66,7 @@ export function HomePage() {
           // Em telas pequenas (base), usamos 'column' (um abaixo do outro)
           // Em telas grandes (lg), usamos 'row' (lado a lado)
           direction={{ base: "column", md: "column", lg: "row" }}
-          gap={8} // Espaçamento entre as duas seções
+          gap={8}
         >
           <Box flex={1}>
             <Heading as="h2" size="lg" textAlign="center" my={{ base: 4, md: 4, lg: 10}}>
