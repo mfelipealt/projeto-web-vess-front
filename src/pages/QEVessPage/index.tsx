@@ -6,6 +6,7 @@ import { qe2VessData } from "../../data/qe2VessData"
 import { qe3VessData } from "../../data/qe4VessData"
 import { qe4VessData } from "../../data/qe3VessData"
 import { qe5VessData } from "../../data/qe5VessData"
+import { useClearEvaluationsOnMount } from "../../hooks/useClearEvaluationsOnMount"
 
 const tabsData = [
     {
@@ -46,6 +47,7 @@ const tabsData = [
 ];
 
 export const QEVessPage = () => {
+    useClearEvaluationsOnMount();
     return (
         <Center p={4}>
             <Tabs.Root defaultValue="qe1" variant="plain" width="100%" maxW="container.xl">

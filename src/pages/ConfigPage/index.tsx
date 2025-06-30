@@ -7,6 +7,7 @@ import { Select, Portal, createListCollection } from "@chakra-ui/react";
 import { ICountry, ILanguage } from "../../commons/interface";
 import LanguageService from "../../service/LanguageService";
 import CountryService from "../../service/CountriesService";
+import { useClearEvaluationsOnMount } from "../../hooks/useClearEvaluationsOnMount";
 
 type TextInputValueKeys = "nome" | "email" | "endereco";
 
@@ -26,6 +27,8 @@ export function ConfigPage() {
   const [idiomaValue, setIdiomaValue] = useState<string[]>([]);
 
   const navigate = useNavigate();
+
+  useClearEvaluationsOnMount();
 
   useEffect(() => {
     async function fetchData() {

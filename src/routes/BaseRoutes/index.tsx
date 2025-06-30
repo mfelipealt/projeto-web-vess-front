@@ -8,10 +8,12 @@ import { LocationEvaluationResumePage } from "../../pages/LocationEvaluationResu
 import { HistoryPage } from "../../pages/HistoryPage";
 import { QEVessPage } from "../../pages/QEVessPage";
 import { GenericInfoPage } from "../../pages/GenericInfoPage";
+import { NavBar } from "../../components/NavBar";
 
 export function BaseRoutes() {
   return (
     <>
+      <NavBar />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/home" element={<HomePage />} />

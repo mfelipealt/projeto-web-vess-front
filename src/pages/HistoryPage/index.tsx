@@ -13,13 +13,15 @@ import { useUserConfig } from '../../contexts/UserConfigContext';
 import AssessmentService from '../../service/AssessmentService';
 import { IAssessmentResponse } from '../../commons/interface';
 import { api } from '../../lib/axiios';
+import { useClearEvaluationsOnMount } from '../../hooks/useClearEvaluationsOnMount';
 
 export function HistoryPage() {
     const { formData: userConfig } = useUserConfig();
     const [history, setHistory] = useState<IAssessmentResponse[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-
+    useClearEvaluationsOnMount();
+    
     useEffect(() => {
         const fetchHistory = async () => {
             if (userConfig.email && userConfig.nome) {

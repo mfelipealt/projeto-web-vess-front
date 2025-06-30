@@ -6,13 +6,14 @@ import { useNavigate } from 'react-router-dom';
 import { useUserConfig } from '../../contexts/UserConfigContext';
 import UserService from '../../service/UserService';
 import { IUser } from '../../commons/interface';
+import { useClearEvaluationsOnMount } from '../../hooks/useClearEvaluationsOnMount';
 
 export const TermsAndConditionsPage = () => {
 
   const [checked, setChecked] = useState(false)
   const navigate = useNavigate();
   const { formData, setFormData } = useUserConfig();
-
+  useClearEvaluationsOnMount();
   const handleConclude = async () => {
     if (!checked) return;
     if (!formData.nome || !formData.email || !formData.pais || !formData.idioma) {
