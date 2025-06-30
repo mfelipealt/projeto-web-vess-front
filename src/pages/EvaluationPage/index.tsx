@@ -82,7 +82,7 @@ export function EvaluationPage() {
             existingEvaluations.push(newEvaluation);
             localStorage.setItem('userEvaluations', JSON.stringify(existingEvaluations));
 
-            setFormData(initialEvaluationData); // Limpa o formulário local
+            setFormData(initialEvaluationData); 
             navigate("/resumo-avaliacoes-amostra");
 
         } catch (error) {

@@ -43,7 +43,6 @@ export function SampleEvaluationResumePage() {
     const [vessScore, setVessScore] = useState<number | null>(null);
 
     useEffect(() => {
-        // Buscar a última avaliação salva
         const evaluationsRaw = localStorage.getItem('userEvaluations');
         if (evaluationsRaw) {
             const evaluations = JSON.parse(evaluationsRaw);
@@ -66,8 +65,6 @@ export function SampleEvaluationResumePage() {
                 if (totalDepth > 0) {
                     const score = +(weightedSum / totalDepth).toFixed(2);
                     setVessScore(score);
-
-                    // Salva o score no objeto de avaliação
                     last.data["vess-score-resumo-amostra"] = score;
                     evaluations[evaluations.length - 1] = last;
                     localStorage.setItem("userEvaluations", JSON.stringify(evaluations));
@@ -157,7 +154,7 @@ export function SampleEvaluationResumePage() {
             />
 
             <Stack
-                direction={{ base: 'column', md: 'column', lg: "row" }} // 👈 A mágica acontece aqui!
+                direction={{ base: 'column', md: 'column', lg: "row" }} 
                 spaceX={4}
                 pt={6}
                 maxW={{ base: "100%", md: "100%", lg: "48%" }}
