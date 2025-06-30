@@ -93,7 +93,7 @@ export function HistoryPage() {
                                                     <Image
                                                         objectFit='cover'
                                                         maxW={{ base: '100%', sm: '200px' }}
-                                                        src={`${API_BASE_URL}/amostras/${amostra.id}/imagem`}
+                                                        src={`${API_BASE_URL}/samples/${amostra.id}/imagem`}
                                                         alt={`Imagem da amostra ${amostra.nomeAmostra}`}
                                                     />
                                                 )}
