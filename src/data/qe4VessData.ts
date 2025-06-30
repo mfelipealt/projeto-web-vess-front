@@ -1,6 +1,6 @@
 import { ContentItem } from "../components/InfoPage";
 
-export const qe3VessData: ContentItem[] = [
+export const qe4VessData: ContentItem[] = [
  {
     type: 'image',
     src: 'VESS 4-1.png', 
@@ -63,7 +63,7 @@ export const qe3VessData: ContentItem[] = [
   },
   {
     type: 'image',
-    src: 'Qe-VESS 4 argiloso.JPG', 
+    src: 'Qe-VESS 4 - argiloso.JPG', 
     alt: 'Qe-VESS 4 argiloso',
     caption: 'Figura 5: Etapas da avaliação de qualidade do solo.'
   },

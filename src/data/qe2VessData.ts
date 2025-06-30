@@ -63,15 +63,9 @@ export const qe2VessData: ContentItem[] = [
   },
   {
     type: 'image',
-    src: 'Qe-VESS 2 argiloso.JPG', 
+    src: 'Qe-VESS 2 argiloso .JPG', 
     alt: 'Qe-VESS 2 argiloso',
     caption: 'Figura 5: Etapas da avaliação de qualidade do solo.'
-  },
-  {
-    type: 'image',
-    src: 'Qe-VESS 2 argiloso (2).JPG', 
-    alt: 'Qe-VESS 2 argiloso (2)',
-    caption: 'Figura 6: Etapas da avaliação de qualidade do solo.'
   },
   {
     type: 'paragraph',
